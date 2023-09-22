@@ -1,7 +1,7 @@
 package variables
 
 import (
-	"io/ioutil"
+	"os"
 	"reflect"
 	"testing"
 
@@ -154,7 +154,7 @@ func TestValidateAndReplaceDataWithVariable(t *testing.T) {
 }
 
 func readFileToStruct(t *testing.T, path string, into interface{}) {
-	bytes, err := ioutil.ReadFile(path)
+	bytes, err := os.ReadFile(path)
 	if err != nil {
 		t.Fatalf("Failed to read test file from %s: %s", path, err.Error())
 	}

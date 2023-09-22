@@ -1,7 +1,6 @@
 package overriding
 
 import (
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"testing"
@@ -33,7 +32,7 @@ func TestMerging(t *testing.T) {
 				t.Error(err)
 				return nil
 			}
-			main, err := ioutil.ReadFile(path)
+			main, err := os.ReadFile(path)
 			if err != nil {
 				t.Error(err)
 				return nil
@@ -42,7 +41,7 @@ func TestMerging(t *testing.T) {
 			parent := []byte{}
 			parentFile := filepath.Join(dirPath, "parent.yaml")
 			if _, err = os.Stat(parentFile); err == nil {
-				parent, err = ioutil.ReadFile(parentFile)
+				parent, err = os.ReadFile(parentFile)
 				if err != nil {
 					t.Error(err)
 					return nil
@@ -52,7 +51,7 @@ func TestMerging(t *testing.T) {
 			plugins := [][]byte{}
 			pluginFile := filepath.Join(dirPath, "plugin.yaml")
 			if _, err = os.Stat(pluginFile); err == nil {
-				plugin, err := ioutil.ReadFile(filepath.Join(dirPath, "plugin.yaml"))
+				plugin, err := os.ReadFile(filepath.Join(dirPath, "plugin.yaml"))
 				if err != nil {
 					t.Error(err)
 					return nil
@@ -63,7 +62,7 @@ func TestMerging(t *testing.T) {
 			resultError := ""
 			errorFile := filepath.Join(dirPath, "result-error.txt")
 			if _, err = os.Stat(errorFile); err == nil {
-				resultErrorBytes, err := ioutil.ReadFile(errorFile)
+				resultErrorBytes, err := os.ReadFile(errorFile)
 				if err != nil {
 					t.Error(err)
 					return nil

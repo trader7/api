@@ -4,7 +4,8 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"os"
+
 	"strconv"
 	"strings"
 	"testing"
@@ -50,7 +51,7 @@ func (devfileValidator DevfileValidator) WriteAndValidate(devfile *commonUtils.T
 func (schemaFile *SchemaFile) checkWithSchema(devfile string, expectedMessage string) error {
 
 	// Read the created yaml file, ready for converison to json
-	devfileData, err := ioutil.ReadFile(devfile)
+	devfileData, err := os.ReadFile(devfile)
 	if err != nil {
 		commonUtils.LogErrorMessage(fmt.Sprintf("  FAIL: schema : unable to read %s: %v", devfile, err))
 		return err
@@ -124,7 +125,7 @@ func writeDevfile(devfile *commonUtils.TestDevfile) error {
 	if marshallErr != nil {
 		err = errors.New(commonUtils.LogErrorMessage(fmt.Sprintf("Marshall devfile %s : %v", devfile.FileName, marshallErr)))
 	} else {
-		err = ioutil.WriteFile(fileName, c, 0644)
+		err = os.WriteFile(fileName, c, 0644)
 		if err != nil {
 			commonUtils.LogErrorMessage(fmt.Sprintf("Write devfile %s : %v", devfile.FileName, err))
 		}

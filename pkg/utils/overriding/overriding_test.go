@@ -1,7 +1,6 @@
 package overriding
 
 import (
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -184,13 +183,13 @@ func TestOverridingPatches(t *testing.T) {
 				t.Error(err)
 				return nil
 			}
-			original, err := ioutil.ReadFile(path)
+			original, err := os.ReadFile(path)
 			if err != nil {
 				t.Error(err)
 				return nil
 			}
 			dirPath := filepath.Dir(path)
-			patch, err := ioutil.ReadFile(filepath.Join(dirPath, "patch.yaml"))
+			patch, err := os.ReadFile(filepath.Join(dirPath, "patch.yaml"))
 			if err != nil {
 				t.Error(err)
 				return nil
@@ -199,7 +198,7 @@ func TestOverridingPatches(t *testing.T) {
 			resultError := ""
 			errorFile := filepath.Join(dirPath, "result-error.txt")
 			if _, err = os.Stat(errorFile); err == nil {
-				resultErrorBytes, err := ioutil.ReadFile(errorFile)
+				resultErrorBytes, err := os.ReadFile(errorFile)
 				if err != nil {
 					t.Error(err)
 					return nil
@@ -236,7 +235,7 @@ func TestPluginOverrides(t *testing.T) {
 }
 
 func readFileToStruct(t *testing.T, path string, into interface{}) {
-	bytes, err := ioutil.ReadFile(path)
+	bytes, err := os.ReadFile(path)
 	if err != nil {
 		t.Fatalf("Failed to read test file from %s: %s", path, err.Error())
 	}

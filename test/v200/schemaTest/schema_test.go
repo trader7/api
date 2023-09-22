@@ -3,13 +3,15 @@ package schemaTest
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/ghodss/yaml"
-	"github.com/santhosh-tekuri/jsonschema"
-	"io/ioutil"
+	"io"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"github.com/ghodss/yaml"
+	"github.com/santhosh-tekuri/jsonschema"
 )
 
 // Structure of json files providing schema to test and tests to run
@@ -46,9 +48,17 @@ func Test_Schema(t *testing.T) {
 	os.Mkdir(tempDir, 0755)
 
 	// Read the content of the jso directory to find test files
-	files, err := ioutil.ReadDir(jsonDir)
+	entries, err := os.ReadDir(jsonDir)
 	if err != nil {
 		t.Fatalf("Error finding test json files in : %s :  %v", jsonDir, err)
+	}
+	files := make([]fs.FileInfo, 0, len(entries))
+	for _, entry := range entries {
+		info, err := entry.Info()
+		if err != nil {
+			t.Fatalf("Error accessing test json files in : %s :  %v", jsonDir, err)
+		}
+		files = append(files, info)
 	}
 
 	combinedTests := 0
@@ -66,7 +76,7 @@ func Test_Schema(t *testing.T) {
 			}
 
 			// Read contents of the json file which defines the tests to run
-			byteValue, err := ioutil.ReadAll(testJson)
+			byteValue, err := io.ReadAll(testJson)
 			if err != nil {
 				t.Errorf("FAIL : failed to read : %s : %v", testJsonFile.Name(), err)
 			}
@@ -111,7 +121,7 @@ func Test_Schema(t *testing.T) {
 				}
 
 				// Read contents of the json file which defines the tests to run
-				byteValue, err := ioutil.ReadAll(testsToRunJson)
+				byteValue, err := io.ReadAll(testsToRunJson)
 				if err != nil {
 					t.Fatalf("FAIL : failed to read : %s : %v", testJsonContent.Tests[m], err)
 				}
@@ -149,7 +159,7 @@ func Test_Schema(t *testing.T) {
 						// Now add each of the yaml sippets used the make the yaml file for test
 						for j := 0; j < len(testsToRunContent.Tests[i].Files); j++ {
 							// Read the snippet
-							data, err := ioutil.ReadFile(filepath.Join(testDir, testsToRunContent.Tests[i].Files[j]))
+							data, err := os.ReadFile(filepath.Join(testDir, testsToRunContent.Tests[i].Files[j]))
 							if err != nil {
 								t.Errorf("FAIL: failed reading %s: %v", filepath.Join(testDir, testsToRunContent.Tests[i].Files[j]), err)
 								testYamlComplete = false
@@ -170,7 +180,7 @@ func Test_Schema(t *testing.T) {
 						}
 
 						// Read the created yaml file, ready for converison to json
-						data, err := ioutil.ReadFile(filepath.Join(testTempDir, testsToRunContent.Tests[i].FileName))
+						data, err := os.ReadFile(filepath.Join(testTempDir, testsToRunContent.Tests[i].FileName))
 						if err != nil {
 							t.Errorf("  FAIL: unable to read %s: %v", testsToRunContent.Tests[i].FileName, err)
 							f.Close()
